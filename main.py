@@ -5,6 +5,7 @@ from generate import process_name_step
 from markup import Markup
 from db import exist_user
 from callback import process_callback
+from telebot.types import ReplyKeyboardRemove
 
 bot = TeleBot(token, parse_mode='HTML')
 
@@ -14,7 +15,7 @@ def start_handler(message):
 
 @bot.message_handler(regexp='Зареєструватися')
 def create_handler(message):
-    msg = bot.send_message(message.chat.id, 'Введіть ваш ПІБ')
+    msg = bot.send_message(message.chat.id, 'Введіть ваш ПІБ', reply_markup=ReplyKeyboardRemove())
     bot.register_next_step_handler(msg,process_name_step, bot) # generate.py
 
 @bot.callback_query_handler(func=lambda call: True)
