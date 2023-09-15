@@ -26,7 +26,7 @@ class Markup:
                         "Змінити ПІБ": {"callback_data": "update_name"},
                         "Змінити дату": {"callback_data": "update_date"},
                         "Змінити фото": {"callback_data":"update_photo"},
-                        "Назад": {"callback_data": "back_start"}
+                        "Назад до меню": {"callback_data": "back_start"}
                 }, row_width=1)
 
                 self.markup = markup
