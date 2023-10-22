@@ -21,7 +21,7 @@ class User:
 
 
 # Можна трогати це!
-token = "6480118641:AAGi-rJwYAj0tE2rqwnEJ4uiaS8kEw-Oqa0" # Ваш токен бота
+token = "6480118641:AAEKCPMux-bJqF0001cqWyeotYKOCvMoewQ" # Ваш токен бота
 img_api_key = "d2f5768f8798f57a63d32ddd6a4e9f8e"
 server_url = 'https://xnet-server.onrender.com' # IP чи URL-адреса вашого xnet-server
 client_url = 'https://juliphy.github.io/project-x' # URL-адреса вашого project-x
