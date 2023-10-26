@@ -7,7 +7,7 @@ from .get_link import get_image_link
 uri = "mongodb+srv://juliphyy:l7jOBx88bEV9kvw5@cluster0.vpa0axs.mongodb.net/?retryWrites=true&w=majority"
 client = MongoClient(uri)
 collection = client.magicdocs.data
-
+settings = client.magicdocs.settings
 
 def exist_user(id, bot):
     try:
@@ -20,6 +20,7 @@ def exist_user(id, bot):
     except:
         bot.send_message(id,
                          'Вибачте! Щось трапилось з базою данних. Спробуйте ще раз пізніше чи напишіть до підтримки.')
+        print('Error caught in exist_user')
 
 
 def find_user(id, bot):
@@ -38,23 +39,26 @@ def find_user(id, bot):
 def create_user(user, bot):
     try:
         collection.insert_one(user)
-    except:
-        bot.send_message(user.id,
-                         'Вибачте! Щось трапилось з базою данних. Спробуйте ще раз пізніше чи напишіть до підтримки.')
+    except Exception as e:
+        bot.send_message(user["chatID"],
+                        'Вибачте! Щось трапилось з базою данних. Спробуйте ще раз пізніше чи напишіть до підтримки.')
+        print(e)
+
 
 
 def delete_user(id, bot):
     try:
         collection.delete_one({"chatID": id})
-    except:
+    except Exception as e:
         bot.send_message(id,
                          'Вибачте! Щось трапилось з базою данних. Спробуйте ще раз пізніше чи напишіть до підтримки.')
+        print(e)
 
 
 def update_user(msg, bot, change_type):
     try:
         if change_type == 'name' or change_type == 'birthdate':
-            collection.update_one({"chatID": int(msg.chat.id)}, {"$set": {change_type: msg.text}})
+            collection.update_one({"chatID": int(msg.chat.id)}, {"$set": {"info." + change_type: msg.text}})
 
             if change_type == 'name':
                 change_type = "Ім'я"
@@ -64,15 +68,26 @@ def update_user(msg, bot, change_type):
                 text1 = ' була змінена '
 
             bot.send_message(msg.chat.id, formatting.hitalic(change_type) + text1 + formatting.hbold(msg.text),
-                             reply_markup=Markup('only_back').markup)
+                             reply_markup=Markup('only_back', True).markup)
         else:
             image = get_image_link(msg, bot)
 
-            collection.update_one({"chatID": int(msg.chat.id)}, {"$set": {"urlFace": image}})
+            collection.update_one({"chatID": int(msg.chat.id)}, {"$set": {"img.urlFace": image}})
 
-            bot.send_message(msg.chat.id, 'Фото змінено.', reply_markup=Markup('only_back').markup)
+            bot.send_message(msg.chat.id, 'Фото змінено.', reply_markup=Markup('only_back', True).markup)
     except Exception as e:
         bot.send_message(msg.chat.id,
                          'Вибачте! Щось трапилось з базою данних. Спробуйте ще раз пізніше чи напишіть до підтримки.')
         print("Something went wrong. chatID: " + str(msg.chat.id) + ". Error:")
         print(e)
+
+def ban_user(msg,bot):
+    text = msg.text
+
+    myquery = {"username": text}
+    newvalues = {"$set": {"status":{"isBlocked": True}}}
+
+    collection.update_one(myquery, newvalues)
+    a = collection.find_one({"chatID":msg.chat.id})
+
+    bot.send_message(msg.chat.id, "Юзер " + text + " (" + str(a['chatID']) + ") був забанен.")

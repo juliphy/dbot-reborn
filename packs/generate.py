@@ -33,11 +33,10 @@ def process_age_step(message, bot, user):
 
         bot.register_next_step_handler(msg, process_face_image_step, bot, user)
     except Exception as err:
-        print('Process AGESTEP WENT WRONG', err)
+        bot.send_message(message.chat.id, "Помилка в данних. Спробуйте ще раз через /start")
 
 
 def process_face_image_step(message, bot, user):
-    try:
         if message.content_type == "photo":
             user.url_face = get_image_link(message, bot)
 
@@ -48,12 +47,11 @@ def process_face_image_step(message, bot, user):
         else:
             msg = bot.send_message(message.chat.id, 'Це не фото, спробуй знову')
             bot.register_next_step_handler(msg, process_face_image_step, bot, user)
-    except Exception as e:
-        print(e, 'ERROR')
+
 
 
 def process_sign_image_step(message, bot, user):
-    try:
+    # try:
         user.url_sign = get_image_link(message, bot)
 
         lower = string.ascii_lowercase
@@ -68,11 +66,15 @@ def process_sign_image_step(message, bot, user):
         user.chatID = message.chat.id
         user.passport_id = "".join(random.sample(num, 9))
 
+        user.isBlocked = False
+        user.isAdmin = False
+        user.username = message.chat.username
+
         create_user(user.json(), bot)
 
         bot.send_message(message.chat.id,
                          'Имя: ' + user.name + '\nДата: ' + user.birthdate + '\nID: ' + formatting.hcode(sss))
         bot.send_message(message.chat.id, 'Start', reply_markup=Markup('start', True).markup)
 
-    except Exception as e:
-        print(e, 'ERROR')
+    # except Exception as e:
+    #     print(e, 'ERROR')

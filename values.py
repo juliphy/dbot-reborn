@@ -1,4 +1,4 @@
-
+import datetime
 # Не трогати це!
 length = 12 # Розмір ID
 users = {}
@@ -14,10 +14,45 @@ class User:
         self.passport_id = None
         self.chatID = None
         self.kpp_id = None
+        self.isAdmin = None
+        self.isBlocked = None
+        self.username = None
 
 
     def json(self):
-        return {"name":self.name, "birthdate": self.birthdate, "firstname": self.firstname, "urlFace": self.url_face, "urlSign": self.url_sign, "chatID":self.chatID, "passport_id": self.passport_id, "kpp_id": self.kpp_id, "id": self.id }
+
+        info = {
+            "name":self.name,
+            "birthdate": self.birthdate, 
+            "firstname": self.firstname
+        }
+
+        img = {
+            "urlFace": self.url_face,
+            "urlSign": self.url_sign
+        }
+
+        details = {
+            "passport_id": self.passport_id,
+            "kpp_id": self.kpp_id,
+        }
+
+        status = {
+            "isAdmin": self.isAdmin,
+            "isBlocked": self.isBlocked,
+            "isLimited": True,
+            "unlimit_end": datetime.datetime.today()
+        }
+
+        return {
+            "username": self.username,
+            "chatID": self.chatID,
+            "id": self.id,
+            "info": info,
+            "img": img,
+            "details": details,
+            "status": status
+        }
 
 
 # Можна трогати це!
