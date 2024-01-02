@@ -35,6 +35,18 @@ def find_user(id, bot):
         bot.send_message(id,
                          'Вибачте! Щось трапилось з базою данних. Спробуйте ще раз пізніше чи напишіть до підтримки.')
 
+def find_user_by_username(username, bot):
+    try:
+        x = collection.find_one({"username": username})
+
+        if x:
+            return x
+        else:
+            raise ValueError("ID не найден.")
+    except:
+        bot.send_message(id,
+                         'Вибачте! Щось трапилось з базою данних. Спробуйте ще раз пізніше чи напишіть до підтримки.')
+
 
 def create_user(user, bot):
     try:
@@ -81,13 +93,38 @@ def update_user(msg, bot, change_type):
         print("Something went wrong. chatID: " + str(msg.chat.id) + ". Error:")
         print(e)
 
+def delete_user_by_username(username, bot):
+    try:
+        collection.delete_one({"username": username})
+    except Exception as e:
+        print(e)
+
+
+
 def ban_user(msg,bot):
-    text = msg.text
+    try:
+        text = msg.text
 
-    myquery = {"username": text}
-    newvalues = {"$set": {"status":{"isBlocked": True}}}
+        if text[0] == "@":
+            text = text[1:]
 
-    collection.update_one(myquery, newvalues)
-    a = collection.find_one({"chatID":msg.chat.id})
+        # myquery = {"username": text}
+        # newvalues = {"$set": {"status":{"isBlocked": True}}}
 
-    bot.send_message(msg.chat.id, "Юзер " + text + " (" + str(a['chatID']) + ") був забанен.")
+        # collection.update_one(myquery, newvalues)
+        # a = collection.find_one({"chatID":msg.chat.id})
+
+        # bot.send_message(msg.chat.id, "Юзер " + text + " (" + str(a['chatID']) + ") був забанен.")
+
+        user = find_user_by_username(text,bot)
+        delete_user_by_username(text,bot)
+
+        user['status']['isBlocked'] = True
+
+        create_user(user,bot)
+    except Exception as e:
+        print(e)
+        bot.send_message(msg.chat.id, "Вибачте! Щось трапилось з базою данних. Спробуйте ще раз пізніше чи напишіть до підтримки.")
+    
+
+    
