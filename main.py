@@ -30,6 +30,7 @@ def create_handler(message):
     else:
         if exist_user(message.chat.id, bot):
             bot.send_message(message.chat.id, 'Ви вже зареєстровані. Видаліть профіль, якщо хочете зареєструватися знову.')
+            return
         else:
             msg = bot.send_message(message.chat.id, 'Введіть ваш ПІБ', reply_markup=ReplyKeyboardRemove())
             bot.register_next_step_handler(msg,process_name_step, bot) # generate.py
